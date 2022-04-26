@@ -1,0 +1,68 @@
+---
+title: "Cálculo Estocástico"
+date: "14/10/2021"
+output: 
+    rmdformats::downcute:
+      highlight: "tango"
+      lightbox: TRUE
+      self_contained: TRUE
+      code_folding: show
+      gallery: TRUE
+      fig_width: 10
+      fig_height: 4
+      df_print: kable
+      toc_float:
+        collapsed: TRUE
+        smooth_scroll: TRUE
+---
+
+```{r setup, echo=FALSE}
+options(rgl.useNULL = TRUE) # Suppress the separate window.
+library(rgl)
+
+```
+## Proceso de Wiener n-dimensional
+
+**Ejercicio 2** Simule en R una trayectoria de los procesos de Wiener vectoriales
+
+```{r}
+#FUNCIÓN PARA SIMULAR EL PROCESO DE WIENER
+Wiener<-function(n,m,t){
+  dt<-t/n
+  dx<-sqrt(dt)
+  Wt<-matrix(0,floor(n*t),m)
+  for (j in 1:m){
+    for(i in 1:(floor(n*t)-1)){
+    Wt[1,]<-0
+    Wt[(i+1),j]<- Wt[i,j] +dx*rnorm(1,0,1)
+    }
+  }
+  return(Wt)
+}
+
+n<-10000  #Número de pasos
+m<-3     #Dimensiones
+t<-1     #Número hasta el cual llega la simulación , es decir dentro de un intervalo de 0 a t
+Wt<-Wiener(n,m,t)
+
+```
+
+A) W(t) = (W~1~(t), W~2~(t))
+
+```{r echo=TRUE}
+plot(Wt[,1],Wt[,2],type="l",lty=1, col="darkred",xlab="W1(t)",ylab="W2(t)", main=sprintf("Simulaciones del Proceso de Wiener en 2 dimensiones"), panel.first = grid())
+legend(x="topleft",legend ="W(t)", bg=NULL,bty="n",cex =0.9, lty= 1,col= "darkred")
+
+```
+
+B) W(t) = (W~1~(t), W~2~(t), W~3~(t))
+
+```{r,echo=TRUE}
+plot3d( Wt[,1],Wt[,2],Wt[,3],col = "darkred" ,type = "l" , lty=1,xlab = "W1(t)",ylab = "W2(t)",zlab = "W3(t)", main = "Simulacion del Proceso de Wiener a 3 dimensiones")
+fn <- spin3d()
+control <- par3dinterpControl(fn, 0, 15, steps = 20)
+rglwidget() %>% playwidget(control, step=0.01, loop = TRUE, rate = 1)
+
+```
+
+
